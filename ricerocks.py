@@ -10,6 +10,7 @@ score = 0
 lives = 3
 time = 0
 started = False
+rock_group = set([])
 
 class ImageInfo:
     def __init__(self, center, size, radius = 0, lifespan = None, animated = False):
@@ -228,12 +229,13 @@ def draw(canvas):
 
     # draw ship and sprites
     my_ship.draw(canvas)
-    a_rock.draw(canvas)
+    #a_rock.draw(canvas)
+    process_sprite_group(rock_group, canvas)
     a_missile.draw(canvas)
     
     # update ship and sprites
     my_ship.update()
-    a_rock.update()
+    #a_rock.update()
     a_missile.update()
 
     # draw splash screen if not started
@@ -244,11 +246,20 @@ def draw(canvas):
 
 # timer handler that spawns a rock    
 def rock_spawner():
-    global a_rock
-    rock_pos = [random.randrange(0, WIDTH), random.randrange(0, HEIGHT)]
-    rock_vel = [random.random() * .6 - .3, random.random() * .6 - .3]
-    rock_avel = random.random() * .2 - .1
-    a_rock = Sprite(rock_pos, rock_vel, 0, rock_avel, asteroid_image, asteroid_info)
+    global rock_group
+    while len(rock_group) <= 12:
+        rock_pos = [random.randrange(0, WIDTH), random.randrange(0, HEIGHT)]
+        rock_vel = [random.random() * .6 - .3, random.random() * .6 - .3]
+        rock_avel = random.random() * .2 - .1
+        print len(rock_group)
+        rock_group.add(Sprite(rock_pos, rock_vel, 0, rock_avel, asteroid_image, asteroid_info))
+        
+# helper function for drawing groups of sprites
+def process_sprite_group(group, canvas):
+    #print len(group)
+    for sprite in group:
+        sprite.draw(canvas)
+        sprite.update()
             
 # initialize stuff
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
