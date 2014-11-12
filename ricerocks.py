@@ -247,12 +247,13 @@ def draw(canvas):
 # timer handler that spawns a rock    
 def rock_spawner():
     global rock_group
-    while len(rock_group) <= 12:
+    if len(rock_group) < 12:
         rock_pos = [random.randrange(0, WIDTH), random.randrange(0, HEIGHT)]
         rock_vel = [random.random() * .6 - .3, random.random() * .6 - .3]
         rock_avel = random.random() * .2 - .1
         print len(rock_group)
         rock_group.add(Sprite(rock_pos, rock_vel, 0, rock_avel, asteroid_image, asteroid_info))
+    
         
 # helper function for drawing groups of sprites
 def process_sprite_group(group, canvas):
