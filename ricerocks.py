@@ -177,11 +177,16 @@ class Sprite:
 
     def update(self):
         # update angle
-        self.angle += self.angle_vel
-        
+        self.angle += self.angle_vel        
         # update position
         self.pos[0] = (self.pos[0] + self.vel[0]) % WIDTH
         self.pos[1] = (self.pos[1] + self.vel[1]) % HEIGHT
+        # update age
+        self.age += 1
+        if self.age < self.lifespan:
+            return False
+        else:
+            return True
         
     def collide(self, other_object):
         # calculate distance between objects
@@ -275,9 +280,14 @@ def rock_spawner():
         
 # helper function for drawing groups of sprites
 def process_sprite_group(group, canvas):
-    for sprite in group:
-        sprite.draw(canvas)
-        sprite.update()
+    iterator = set(group)
+    for sprite in iterator:
+        if sprite.update() == False:
+            sprite.draw(canvas)
+            sprite.update()
+        else:
+            group.remove(sprite)
+            
         
 # helper function for checking collisions
 def group_collide(group, other_object):
