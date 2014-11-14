@@ -186,10 +186,6 @@ class Sprite:
     def collide(self, other_object):
         # calculate distance between objects
         dist = math.sqrt(abs(self.pos[0] - other_object.pos[0]) ** 2 + abs(self.pos[1] - other_object.pos[1]) ** 2)
-        print dist
-        print self.radius
-        print other_object.radius
-        print dist - (self.radius + other_object.radius)
         if dist <= self.radius + other_object.radius:
             return True
         else:
@@ -287,14 +283,13 @@ def process_sprite_group(group, canvas):
 # helper function for checking collisions
 def group_collide(group, other_object):
     # create copy of the original set to iterate over
+    collision = False
     iterator = set(group)
-    for obj in iterator:
-        if obj.collide(other_object) == True:
-            group.remove(obj)
-            return True
-        else:
-            return False
-            
+    for rock in iterator:
+        if rock.collide(other_object) == True:
+            collision = True
+            group.remove(rock)
+    return collision
             
 # initialize stuff
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
