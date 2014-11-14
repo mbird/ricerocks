@@ -141,11 +141,11 @@ class Ship:
         self.angle_vel -= .05
         
     def shoot(self):
-        global a_missile
+        global missile_group
         forward = angle_to_vector(self.angle)
         missile_pos = [self.pos[0] + self.radius * forward[0], self.pos[1] + self.radius * forward[1]]
         missile_vel = [self.vel[0] + 6 * forward[0], self.vel[1] + 6 * forward[1]]
-        a_missile = Sprite(missile_pos, missile_vel, self.angle, 0, missile_image, missile_info, missile_sound)
+        missile_group.add(Sprite(missile_pos, missile_vel, self.angle, 0, missile_image, missile_info, missile_sound))
     
     def get_position(self):
         return self.pos
@@ -248,11 +248,10 @@ def draw(canvas):
     # draw ship and sprites
     my_ship.draw(canvas)
     process_sprite_group(rock_group, canvas) # draws and updates a group of sprites
-    a_missile.draw(canvas)
+    process_sprite_group(missile_group, canvas)
     
-    # update ship and sprites
+    # update ship
     my_ship.update()
-    a_missile.update()
     
     # check for collisions and update lives accordingly
     if group_collide(rock_group, my_ship) == True:
@@ -297,8 +296,7 @@ frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
 # initialize ship and two sprites
 my_ship = Ship([WIDTH / 2, HEIGHT / 2], [0, 0], 0, ship_image, ship_info)
 a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, .1, asteroid_image, asteroid_info)
-a_missile = Sprite([2 * WIDTH / 3, 2 * HEIGHT / 3], [-1,1], 0, 0, missile_image, missile_info, missile_sound)
-
+missile_group = set([])
 
 # register handlers
 frame.set_keyup_handler(keyup)
