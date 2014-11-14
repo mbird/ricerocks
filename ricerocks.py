@@ -147,7 +147,11 @@ class Ship:
         missile_vel = [self.vel[0] + 6 * forward[0], self.vel[1] + 6 * forward[1]]
         a_missile = Sprite(missile_pos, missile_vel, self.angle, 0, missile_image, missile_info, missile_sound)
     
+    def get_position(self):
+        return self.pos
     
+    def get_radius(self):
+        return self.radius
     
 # Sprite class
 class Sprite:
@@ -178,6 +182,20 @@ class Sprite:
         # update position
         self.pos[0] = (self.pos[0] + self.vel[0]) % WIDTH
         self.pos[1] = (self.pos[1] + self.vel[1]) % HEIGHT
+        
+    def collide(self, other_object):
+        # calculate distance between objects
+        dist = math.sqrt(abs(self.pos[0] - other_object.pos[0]) + abs(self.pos[1] - other_object[1]))
+        if dist <= self.radius + other_object.radius:
+            return True
+        else:
+            return False
+        
+    def get_position(self):
+        return self.pos
+    
+    def get_radius(self):
+        return self.radius
   
         
 # key handlers to control ship   
@@ -257,6 +275,12 @@ def process_sprite_group(group, canvas):
     for sprite in group:
         sprite.draw(canvas)
         sprite.update()
+        
+# helper function for checking collisions
+def group_collide(group, other_object):
+    iterator = set(group)
+    for obj in iterator:
+        if 
             
 # initialize stuff
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
