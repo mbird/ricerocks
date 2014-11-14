@@ -185,7 +185,11 @@ class Sprite:
         
     def collide(self, other_object):
         # calculate distance between objects
-        dist = math.sqrt(abs(self.pos[0] - other_object.pos[0]) + abs(self.pos[1] - other_object[1]))
+        dist = math.sqrt(abs(self.pos[0] - other_object.pos[0]) ** 2 + abs(self.pos[1] - other_object.pos[1]) ** 2)
+        print dist
+        print self.radius
+        print other_object.radius
+        print dist - (self.radius + other_object.radius)
         if dist <= self.radius + other_object.radius:
             return True
         else:
@@ -228,7 +232,7 @@ def click(pos):
         started = True
 
 def draw(canvas):
-    global time, started
+    global time, started, lives
     
     # animiate background
     time += 1
@@ -253,6 +257,10 @@ def draw(canvas):
     # update ship and sprites
     my_ship.update()
     a_missile.update()
+    
+    # check for collisions and update lives accordingly
+    if group_collide(rock_group, my_ship) == True:
+        lives -= 1
 
     # draw splash screen if not started
     if not started:
@@ -278,9 +286,15 @@ def process_sprite_group(group, canvas):
         
 # helper function for checking collisions
 def group_collide(group, other_object):
+    # create copy of the original set to iterate over
     iterator = set(group)
     for obj in iterator:
-        if 
+        if obj.collide(other_object) == True:
+            group.remove(obj)
+            return True
+        else:
+            return False
+            
             
 # initialize stuff
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
