@@ -147,13 +147,8 @@ class Ship:
         missile_pos = [self.pos[0] + self.radius * forward[0], self.pos[1] + self.radius * forward[1]]
         missile_vel = [self.vel[0] + 6 * forward[0], self.vel[1] + 6 * forward[1]]
         missile_group.add(Sprite(missile_pos, missile_vel, self.angle, 0, missile_image, missile_info, missile_sound))
-    
-    def get_position(self):
-        return self.pos
-    
-    def get_radius(self):
-        return self.radius
-    
+
+
 # Sprite class
 class Sprite:
     def __init__(self, pos, vel, ang, ang_vel, image, info, sound = None):
@@ -202,12 +197,6 @@ class Sprite:
         else:
             return False
         
-    def get_position(self):
-        return self.pos
-    
-    def get_radius(self):
-        return self.radius
-  
         
 # key handlers to control ship   
 def keydown(key):
