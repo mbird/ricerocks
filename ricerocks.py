@@ -233,7 +233,7 @@ def click(pos):
         started = True
 
 def draw(canvas):
-    global time, started, lives, score
+    global time, started, lives, score, rock_group
     
     # animiate background
     time += 1
@@ -252,7 +252,8 @@ def draw(canvas):
 
     # draw ship and sprites
     my_ship.draw(canvas)
-    process_sprite_group(rock_group, canvas) # draws and updates a group of sprites
+    if started:
+        process_sprite_group(rock_group, canvas) # draws and updates a group of sprites
     process_sprite_group(missile_group, canvas)
     
     # update ship
@@ -261,6 +262,10 @@ def draw(canvas):
     # check for collisions and update lives accordingly
     if group_collide(rock_group, my_ship) == True:
         lives -= 1
+    if lives <= 0:
+        started = False
+        lives = 3
+        score = 0
         
     # check for missile hits and update score
     score += group_group_collide(rock_group, missile_group)
