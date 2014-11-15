@@ -224,13 +224,18 @@ def keyup(key):
         
 # mouseclick handlers that reset UI and conditions whether splash image is drawn
 def click(pos):
-    global started
+    global started, lives, score, rock_group
     center = [WIDTH / 2, HEIGHT / 2]
     size = splash_info.get_size()
     inwidth = (center[0] - size[0] / 2) < pos[0] < (center[0] + size[0] / 2)
     inheight = (center[1] - size[1] / 2) < pos[1] < (center[1] + size[1] / 2)
     if (not started) and inwidth and inheight:
         started = True
+        rock_group = set([])
+        lives = 3
+        score = 0
+        soundtrack.play()
+        timer.start()
 
 def draw(canvas):
     global time, started, lives, score, rock_group
@@ -260,12 +265,12 @@ def draw(canvas):
     my_ship.update()
     
     # check for collisions and update lives accordingly
-    if group_collide(rock_group, my_ship) == True:
+    if group_collide(rock_group, my_ship) == True and lives > 0:
         lives -= 1
     if lives <= 0:
         started = False
-        lives = 3
-        score = 0
+        soundtrack.rewind()
+        timer.stop()
         
     # check for missile hits and update score
     score += group_group_collide(rock_group, missile_group)
@@ -281,9 +286,12 @@ def rock_spawner():
     global rock_group
     if len(rock_group) < 12:
         rock_pos = [random.randrange(0, WIDTH), random.randrange(0, HEIGHT)]
-        rock_vel = [random.random() * .6 - .3, random.random() * .6 - .3]
+        # vel of new spawned rocks increases with score
+        rock_vel = [(random.random() * .6 - .3) * (score + 10) / 10, (random.random() * .6 - .3) * (score + 10) / 10]
         rock_avel = random.random() * .2 - .1
-        rock_group.add(Sprite(rock_pos, rock_vel, 0, rock_avel, asteroid_image, asteroid_info))
+        dist = math.sqrt(abs(rock_pos[0] - my_ship.pos[0]) ** 2 + abs(rock_pos[1] - my_ship.pos[1]) ** 2)
+        if dist > 100:
+            rock_group.add(Sprite(rock_pos, rock_vel, 0, rock_avel, asteroid_image, asteroid_info))
     
         
 # helper function for drawing groups of sprites
