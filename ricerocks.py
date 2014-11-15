@@ -11,6 +11,7 @@ lives = 3
 time = 0
 started = False
 rock_group = set([])
+explosion_group = set([])
 
 class ImageInfo:
     def __init__(self, center, size, radius = 0, lifespan = None, animated = False):
@@ -172,8 +173,13 @@ class Sprite:
             sound.play()
    
     def draw(self, canvas):
-        canvas.draw_image(self.image, self.image_center, self.image_size,
-                          self.pos, self.image_size, self.angle)
+        if self.animated:
+            canvas.draw_image(self.image, [self.image_center[0] + self.image_size[0] * self.age, self.image_center[1]] , self.image_size,
+                              self.pos, self.image_size, self.angle)
+            self.age += 1
+        else:
+            canvas.draw_image(self.image, self.image_center, self.image_size,
+                              self.pos, self.image_size, self.angle)
 
     def update(self):
         # update angle
@@ -205,26 +211,28 @@ class Sprite:
         
 # key handlers to control ship   
 def keydown(key):
-    if key == simplegui.KEY_MAP['left']:
-        my_ship.decrement_angle_vel()
-    elif key == simplegui.KEY_MAP['right']:
-        my_ship.increment_angle_vel()
-    elif key == simplegui.KEY_MAP['up']:
-        my_ship.set_thrust(True)
-    elif key == simplegui.KEY_MAP['space']:
-        my_ship.shoot()
+    if started: 
+        if key == simplegui.KEY_MAP['left']:
+            my_ship.decrement_angle_vel()
+        elif key == simplegui.KEY_MAP['right']:
+            my_ship.increment_angle_vel()
+        elif key == simplegui.KEY_MAP['up']:
+            my_ship.set_thrust(True)
+        elif key == simplegui.KEY_MAP['space']:
+            my_ship.shoot()
         
 def keyup(key):
-    if key == simplegui.KEY_MAP['left']:
-        my_ship.increment_angle_vel()
-    elif key == simplegui.KEY_MAP['right']:
-        my_ship.decrement_angle_vel()
-    elif key == simplegui.KEY_MAP['up']:
-        my_ship.set_thrust(False)
+    if started:
+        if key == simplegui.KEY_MAP['left']:
+            my_ship.increment_angle_vel()
+        elif key == simplegui.KEY_MAP['right']:
+            my_ship.decrement_angle_vel()
+        elif key == simplegui.KEY_MAP['up']:
+            my_ship.set_thrust(False)
         
 # mouseclick handlers that reset UI and conditions whether splash image is drawn
 def click(pos):
-    global started, lives, score, rock_group
+    global started, lives, score, rock_group, explosion_group
     center = [WIDTH / 2, HEIGHT / 2]
     size = splash_info.get_size()
     inwidth = (center[0] - size[0] / 2) < pos[0] < (center[0] + size[0] / 2)
@@ -232,6 +240,7 @@ def click(pos):
     if (not started) and inwidth and inheight:
         started = True
         rock_group = set([])
+        explosion_group = set([])
         lives = 3
         score = 0
         soundtrack.play()
@@ -260,6 +269,7 @@ def draw(canvas):
     if started:
         process_sprite_group(rock_group, canvas) # draws and updates a group of sprites
     process_sprite_group(missile_group, canvas)
+    process_sprite_group(explosion_group, canvas)
     
     # update ship
     my_ship.update()
@@ -314,6 +324,8 @@ def group_collide(group, other_object):
         if item.collide(other_object) == True:
             collision = True
             group.remove(item)
+            explosion_group.add(Sprite(item.pos, [0, 0], 0, 0, explosion_image, explosion_info, explosion_sound))
+            
     return collision
 
 def group_group_collide(group1, group2):
