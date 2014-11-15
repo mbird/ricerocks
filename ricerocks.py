@@ -233,7 +233,7 @@ def click(pos):
         started = True
 
 def draw(canvas):
-    global time, started, lives
+    global time, started, lives, score
     
     # animiate background
     time += 1
@@ -261,6 +261,9 @@ def draw(canvas):
     # check for collisions and update lives accordingly
     if group_collide(rock_group, my_ship) == True:
         lives -= 1
+        
+    # check for missile hits and update score
+    score += group_group_collide(rock_group, missile_group)
 
     # draw splash screen if not started
     if not started:
@@ -289,16 +292,26 @@ def process_sprite_group(group, canvas):
             group.remove(sprite)
             
         
-# helper function for checking collisions
+# helper functions for checking collisions
 def group_collide(group, other_object):
     # create copy of the original set to iterate over
     collision = False
     iterator = set(group)
-    for rock in iterator:
-        if rock.collide(other_object) == True:
+    for item in iterator:
+        if item.collide(other_object) == True:
             collision = True
-            group.remove(rock)
+            group.remove(item)
     return collision
+
+def group_group_collide(group1, group2):
+    counter = 0
+    iterator = set(group1)
+    for item in iterator:
+        if group_collide(group2, item) == True:
+            counter += 1
+            group1.discard(item)
+    return counter
+            
             
 # initialize stuff
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
