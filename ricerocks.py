@@ -200,24 +200,22 @@ class Sprite:
         
 # key handlers to control ship   
 def keydown(key):
-    if started: 
-        if key == simplegui.KEY_MAP['left']:
-            my_ship.decrement_angle_vel()
-        elif key == simplegui.KEY_MAP['right']:
-            my_ship.increment_angle_vel()
-        elif key == simplegui.KEY_MAP['up']:
-            my_ship.set_thrust(True)
-        elif key == simplegui.KEY_MAP['space']:
-            my_ship.shoot()
+    if key == simplegui.KEY_MAP['left']:
+        my_ship.decrement_angle_vel()
+    elif key == simplegui.KEY_MAP['right']:
+        my_ship.increment_angle_vel()
+    elif key == simplegui.KEY_MAP['up']:
+        my_ship.set_thrust(True)
+    elif key == simplegui.KEY_MAP['space']:
+        my_ship.shoot()
         
 def keyup(key):
-    if started:
-        if key == simplegui.KEY_MAP['left']:
-            my_ship.increment_angle_vel()
-        elif key == simplegui.KEY_MAP['right']:
-            my_ship.decrement_angle_vel()
-        elif key == simplegui.KEY_MAP['up']:
-            my_ship.set_thrust(False)
+    if key == simplegui.KEY_MAP['left']:
+        my_ship.increment_angle_vel()
+    elif key == simplegui.KEY_MAP['right']:
+        my_ship.decrement_angle_vel()
+    elif key == simplegui.KEY_MAP['up']:
+        my_ship.set_thrust(False)
         
 # mouseclick handlers that reset UI and conditions whether splash image is drawn
 def click(pos):
@@ -228,15 +226,13 @@ def click(pos):
     inheight = (center[1] - size[1] / 2) < pos[1] < (center[1] + size[1] / 2)
     if (not started) and inwidth and inheight:
         started = True
-        rock_group = set([])
-        explosion_group = set([])
         lives = 3
         score = 0
         soundtrack.play()
         timer.start()
 
 def draw(canvas):
-    global time, started, lives, score, rock_group
+    global time, started, lives, score, rock_group, explosion_group
     
     # animiate background
     time += 1
@@ -270,6 +266,8 @@ def draw(canvas):
         started = False
         soundtrack.rewind()
         timer.stop()
+        explosion_group = set([])
+        rock_group = set([])
         
     # check for missile hits and update score
     score += group_group_collide(rock_group, missile_group)
